@@ -9,9 +9,12 @@ using namespace std;
 using namespace cv;
 
 Mat image, filtered;
+Mat kernel;
 bool congelado = false;
 bool liveImage = false;
 string readImage = "PlaceholderImage.jpg";
+Mat grad_x, grad_y;
+
 /*< Main START >*/
 int main(int argc, char *argv[])
 {
@@ -60,20 +63,16 @@ int main(int argc, char *argv[])
       case 'M':
         medianBlur(image, filtered, 5);
         imshow("Median Blur", filtered);
-
       break;
 
       case 'P':
         blur(image, filtered, Size(5, 5));
         imshow("Image Prom", filtered);
-
       break;
 
       case'L':
-
       Laplacian(image,  filtered, 0);
       imshow("Image Laplacian", filtered);
-
       break;
 
       //https://stackoverflow.com/questions/56812505/image-restoration-to-enhance-details-with-opencv Sharpen
@@ -82,12 +81,17 @@ int main(int argc, char *argv[])
         GaussianBlur(image, filtered, Size(3, 3) , 0);
         Laplacian(filtered,  filtered, 0);
         imshow("Image Laplacian of Gaussian", filtered);
-
       break;
 
 
       case 'E':
   //Enhancement
+//https://en.wikipedia.org/wiki/Kernel_(image_processing)
+      kernel = (Mat_<double>(3, 3) << 0, -1, 0,
+              -1, 5, -1,
+              0, -1, 0);  //Matriox obtained from source
+      filter2D(image, filtered, -1, kernel);
+
       imshow("Enhancement", filtered);
 
       break;
@@ -97,7 +101,6 @@ int main(int argc, char *argv[])
       case 'B':
       //https://docs.opencv.org/2.4/doc/tutorials/imgproc/imgtrans/sobel_derivatives/sobel_derivatives.html
 
-        Mat grad_x, grad_y;
 
 
         Sobel( image, grad_x, CV_16S, 1, 0, 3, 1, 0, BORDER_DEFAULT );
@@ -115,9 +118,22 @@ int main(int argc, char *argv[])
         imshow("Image Edge Detection", filtered);
 
       break;
+      //acodigo.blogspot.com/2017/04/opencv-operaciones-morfologicas.html
+      case 'D':
+        kernel = kernel = (Mat_<double>(3, 3) << 1, 1, 1,
+                1, 1, 1,
+                1, 1, 1);  //Matriox obtained from source
+        dilate(image, filtered, kernel, Point(-1,-1));
+        imshow("Dilation", filtered);
+      break;
 
-
-
+      case 'e':
+        kernel = kernel = (Mat_<double>(3, 3) << 1, 1, 1,
+                1, 1, 1,
+                1, 1, 1);  //Matriox obtained from source
+        erode(image, filtered, kernel, Point(-1,-1));
+        imshow("Erosion", filtered);
+      break;
 
     }
 
