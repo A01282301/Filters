@@ -12,7 +12,7 @@ Mat image, filtered;
 Mat kernel;
 bool congelado = false;
 bool liveImage = false;
-string readImage = "PlaceholderImage.jpg";
+string readImage = "PlaceholderImage2.jpg";
 Mat grad_x, grad_y;
 
 /*< Main START >*/
@@ -61,7 +61,7 @@ int main(int argc, char *argv[])
       break;
 
       case 'M':
-        medianBlur(image, filtered, 5);
+        medianBlur(image, filtered, 9);
         imshow("Median Blur", filtered);
       break;
 
@@ -101,8 +101,6 @@ int main(int argc, char *argv[])
       case 'B':
       //https://docs.opencv.org/2.4/doc/tutorials/imgproc/imgtrans/sobel_derivatives/sobel_derivatives.html
 
-
-
         Sobel( image, grad_x, CV_16S, 1, 0, 3, 1, 0, BORDER_DEFAULT );
         convertScaleAbs( grad_x, grad_x );
 
@@ -118,6 +116,36 @@ int main(int argc, char *argv[])
         imshow("Image Edge Detection", filtered);
 
       break;
+      //https://www.tutorialspoint.com/opencv/opencv_sobel_operator.htm
+      case 'Y':
+
+
+              Sobel( image, grad_x, CV_16S, 0, 1, 3, 1, 0, BORDER_DEFAULT );
+              convertScaleAbs( grad_x, grad_x );
+
+
+              addWeighted( grad_x, 0.5, grad_x, 0.5, 0, filtered);
+
+
+
+      convertScaleAbs( grad_x, grad_x );
+        imshow("Image Derivative y", filtered);
+
+      break;
+
+
+      case 'X':
+      Sobel( image, grad_y, CV_16S, 1, 0, 3, 1, 0, BORDER_DEFAULT );
+      convertScaleAbs( grad_y, grad_y );
+
+
+      addWeighted( grad_y, 0.5, grad_y, 0.5, 0, filtered);
+
+      imshow("Image Derivative x", filtered);
+
+      break;
+
+
       //acodigo.blogspot.com/2017/04/opencv-operaciones-morfologicas.html
       case 'D':
         kernel = kernel = (Mat_<double>(3, 3) << 1, 1, 1,
@@ -127,7 +155,7 @@ int main(int argc, char *argv[])
         imshow("Dilation", filtered);
       break;
 
-      case 'e':
+      case 'R': //Erosion
         kernel = kernel = (Mat_<double>(3, 3) << 1, 1, 1,
                 1, 1, 1,
                 1, 1, 1);  //Matriox obtained from source
@@ -136,9 +164,6 @@ int main(int argc, char *argv[])
       break;
 
     }
-
-
-
 
 
     imshow("Image", image);
